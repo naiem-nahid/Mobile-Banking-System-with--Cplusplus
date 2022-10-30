@@ -2,8 +2,6 @@
 *****************************
 Author: MD. Naiem Islam Nahid
 Link: https://github.com/naiem-nahid
-
-Don't Copy.
 *****************************
 */
 
@@ -44,10 +42,7 @@ public:
     bool resetCheck( string nam, string addr, string dob, long long nid);
     void fshow( );
     void set_newPIN( int pin)
-    {
-        PIN=pin;
-    }
-
+    { PIN=pin; }
 
 };
 
@@ -75,8 +70,9 @@ class Account
     int tnxhis=0;
 
 public:
-    bool mobile_Check( long long mob );
+    
     void set_UserInfo( string name, string address, string dob, long long mobile, long long nid, int pin);
+    bool mobile_Check( long long mob );
     bool check_PIN( int pin );
     void showInfo( );
     bool check_Balance( double taka);
@@ -216,99 +212,7 @@ void CreateAC( )
 
 }
 
-long long MobileINPUT( )  // function to take mobile number input checking that there is not match two number in list
-{
-    long long mob;
-    bool loop=true;;
 
-    while( loop)
-    {
-        loop=false;
-        cin>>mob;
-
-        for(int i=0; i<usedAC; i++)
-            if( accounts[i].mobile_Check(mob))
-            {
-                loop=true;
-                cout<<"Your Entered Number is already registered"<<endl;
-                cout<<"Please Enter another number and try again"<<endl;
-                cout<<"Enter Mobile NO"<<endl;
-            }
-    }
-
-    return mob;
-
-}
-bool Account::mobile_Check( long long mob)
-{
-    if( UserInfo.mobileCheck(mob))
-        return true;
-    else
-        return false;
-}
-
-bool User::mobileCheck( long long mob )
-{
-    if( mob==MobileNO)
-        return true;
-    else
-        return false;
-}
-int PIN_INPUT( ) // function to take input of 4 digits pin number, and non- repetitive
-{
-
-
-
-    int a,b,c,d,pin;
-    bool loop=true;
-
-    while( loop )
-    {
-        loop=false;
-        cout<<"Please Enter a four digit number to set your PIN"<<endl;
-        cin>>pin;
-
-        if( pin>9999 || pin<1000)
-        {
-            cout<<"You have not a entered a four digit pin"<<endl;
-            cout<<"Please enter a for digit number to set pin"<<endl;
-            loop=true;
-            continue;
-        }
-
-        a=pin;
-        d=a%10;
-        a/=10;
-        c=a%10;
-        a/=10;
-        b=a%10;
-        a/=10;
-
-        if( a==b || a==c || a==d || b==c || b==d || c==d )
-        {
-            cout<<"Please enter non-repeatative number"<<endl<<
-                "Your pin should be contain different digit"<<endl;
-            loop=true;
-            continue ;
-        }
-    }
-
-    return pin;
-}
-void Account::set_UserInfo( string name, string address, string dob, long long mobile, long long nid, int pin)
-{
-    UserInfo.setUser( name, address, dob, mobile, nid, pin) ;
-}
-
-void User::setUser( string nam, string adres, string dob, long long mobile, long long nid, int pin)
-{
-    name=nam;
-    address=adres;
-    DOB=dob;
-    MobileNO=mobile;
-    NID=nid;
-    PIN=pin;
-}
 void SendMoney( )
 {
     bool loop=true;
@@ -406,15 +310,7 @@ void SendMoney( )
 
 
 }
-int NumberSearch( long long mob )
-{
-    for( int i=0; i< usedAC; i++)
-    {
-        if( accounts[i].mobile_Check( mob))
-            return i;
-    }
-    return -1;
-}
+
 
 void SendMoney_nonBaki( )
 {
@@ -551,8 +447,25 @@ void CashIn( )
     while(loop);
     cout<<"Enter the amount you want to Cash IN."<<endl;
     cin>>amount;
+
+
+    loop=true;
+
+    while(loop)
+    {
+    	int pin;
+    	cout<<"Enter the manager PIN number to Cash IN"<<endl;
+    	cin>>pin;
+    	if( pin==54896)
+    		loop=false;
+    	else
+    	{
+    		cout<<"manager PIN number is wrong. Please try again"<<endl;
+    		cout<<"Please Try Again"<<endl;
+    	}
+    }
     accounts[i].set_Balance( amount);
-    accounts[i].set_Tnx( amount, 2, 01100000000);
+    accounts[i].set_Tnx( amount, 2, 1000000001);
     cout<<"Your Cash IN is successful."<<endl;
 
 }
@@ -642,11 +555,79 @@ void CashOut()
 
     accounts[i].set_Balance(-balance);
     accounts[i].set_Tnx( -balance, 4, mob2 );
-    cout<<"Your send money is successful"<<endl;
+    cout<<"Your Cash Out is successful"<<endl;
 
 }
 void PayBill( )
 {
+
+bool loop=true;
+    int i,j, pin;
+    long long mob,mob2;
+    do
+    {
+
+        cout<<"Enter Your Mobile Number"<<endl;
+        cin>>mob;
+        i= NumberSearch( mob);
+
+        if( i==-1)
+        {
+            cout<<"Your Entered Number is wrong"<<endl;
+            cout<<"Try with another number"<<endl;
+
+        }
+        else
+        {
+            loop=false;
+        }
+    }
+    while( loop );
+
+    loop=true;
+
+    do
+    {
+
+        cout<<"Enter your pin number"<<endl;
+        cin>>pin;
+        if( accounts[i].check_PIN(pin))
+        {
+            loop=false;
+        }
+        else
+        {
+
+            cout<<"Your Entered PIN is wrong"<<endl;
+            cout<<"Please Try again"<<endl;
+        }
+    }while(loop);
+
+    cout<<" Which Bill Do you want to pay"<<endl;
+    cout<<"1. Electricity"<<endl<<"2. Gash"<<endl<<"3. WASA"<<endl  ;
+    int option;
+    cin>>option;
+    cout<<"Enter Your User NO to pay bill."<<endl;
+    cin>>option;
+    cout<<"Enter the month of payong bill( MM/YYYY)."<<endl;
+    cin>>option;
+    cout<<"Enter the amount of bill"<<endl;
+    double amount;
+    cin>>amount;
+    loop=true;
+   
+    	if( accounts[i].check_Balance(amount))
+    		{
+    			accounts[i].set_Balance(-amount);
+    			accounts[i].set_Tnx(-amount, 5, 10000001 );
+    			cout<<"Your Pay Bill is successful"<<endl;
+    		}
+    	else
+    	{
+    		cout<<"You balance is insufficient"<<endl;
+    		cout<<"Please Cash IN and try again later"<<endl;
+    	}
+    
 
 }
 
@@ -803,9 +784,95 @@ void Exit( )
 {
     cout<<"\nThank YOU for suing \"BAKI\" banking system."<<endl;
 }
-bool User::checkPin( int pin)
+
+int PIN_INPUT( ) // function to take input of 4 digits pin number, and non- repetitive
 {
-    if( PIN==pin)
+
+
+
+    int a,b,c,d,pin;
+    bool loop=true;
+
+    while( loop )
+    {
+        loop=false;
+        cout<<"Please Enter a four digit number to set your PIN"<<endl;
+        cin>>pin;
+
+        if( pin>9999 || pin<1000)
+        {
+            cout<<"You have not a entered a four digit pin"<<endl;
+            cout<<"Please enter a for digit number to set pin"<<endl;
+            loop=true;
+            continue;
+        }
+
+        a=pin;
+        d=a%10;
+        a/=10;
+        c=a%10;
+        a/=10;
+        b=a%10;
+        a/=10;
+
+        if( a==b || a==c || a==d || b==c || b==d || c==d )
+        {
+            cout<<"Please enter non-repeatative number"<<endl<<
+                "Your pin should be contain different digit"<<endl;
+            loop=true;
+            continue ;
+        }
+    }
+
+    return pin;
+}
+
+long long MobileINPUT( )  // function to take mobile number input checking that there is not match two number in list
+{
+    long long mob;
+    bool loop=true;;
+
+    while( loop)
+    {
+        loop=false;
+        cin>>mob;
+
+        for(int i=0; i<usedAC; i++)
+            if( accounts[i].mobile_Check(mob))
+            {
+                loop=true;
+                cout<<"Your Entered Number is already registered"<<endl;
+                cout<<"Please Enter another number and try again"<<endl;
+                cout<<"Enter Mobile NO"<<endl;
+            }
+    }
+
+    return mob;
+
+}
+
+int NumberSearch( long long mob )
+{
+    for( int i=0; i< usedAC; i++)
+    {
+        if( accounts[i].mobile_Check( mob))
+            return i;
+    }
+    return -1;
+}
+
+
+
+void Account::set_UserInfo( string name, string address, string dob, long long mobile, long long nid, int pin)
+{
+    UserInfo.setUser( name, address, dob, mobile, nid, pin) ;
+}
+
+
+
+bool Account::mobile_Check( long long mob)
+{
+    if( UserInfo.mobileCheck(mob))
         return true;
     else
         return false;
@@ -819,35 +886,60 @@ bool Account::check_PIN( int pin )
         return false;
 }
 
-void Account::showInfo( )
+
+void User::setUser( string nam, string adres, string dob, long long mobile, long long nid, int pin)
 {
-    UserInfo.showUser( );
-}
-void User::showUser( )
-{
-    cout<<"Name    : "<<name<<endl;
-    cout<<"Address : "<<address<<endl;
-    cout<<"Mobile  : "<<MobileNO<<endl;
-    cout<<"NID     : "<<NID<<endl;
-    cout<<"DOB     : "<<DOB<<endl;
+    name=nam;
+    address=adres;
+    DOB=dob;
+    MobileNO=mobile;
+    NID=nid;
+    PIN=pin;
 }
 
-bool Account::check_Balance( double taka)
+
+bool User::mobileCheck( long long mob )
 {
-    if( taka <=Balance && (Balance-taka)>=0)
+    if( mob==MobileNO)
         return true;
     else
         return false;
 }
-void Account::set_Balance( double balance )
+
+
+bool User::checkPin( int pin)
 {
-    Balance+=balance;
+    if( PIN==pin)
+        return true;
+    else
+        return false;
 }
+
+
+void Account::showInfo( )
+{
+    UserInfo.showUser( );
+}
+
+bool Account::check_Balance( double taka)
+{
+    if( taka <=Balance && taka>=0)
+        return true;
+    else
+        return false;
+}
+
 
 void Account::show_Balance( )
 {
     cout<<"Your Balance is : "<<Balance<<endl;
 }
+
+void Account::set_Balance( double balance )
+{
+    Balance+=balance;
+}
+
 
 bool Account::chek_Reset( string name, string address,string dob, long long nid)
 {
@@ -878,6 +970,19 @@ void Account::fshowInfo()
     UserInfo.fshow( );
 }
 
+
+void User::showUser( )
+{
+    cout<<"Name    : "<<name<<endl;
+    cout<<"Address : "<<address<<endl;
+    cout<<"Mobile  : "<<MobileNO<<endl;
+    cout<<"NID     : "<<NID<<endl;
+    cout<<"DOB     : "<<DOB<<endl;
+}
+
+
+
+
 void User::fshow()
 {
     ofstream out;
@@ -901,14 +1006,15 @@ void TNX::setTnx( double amount, int n, long long mob)
 
     this->amount= amount;
     if( n==1)
-        TNXtype="SendMoney";
+        TNXtype="Send Money";
     else if( n==2 )
-        TNXtype="CashIN";
+        TNXtype="Cash IN";
     else if ( n==3 )
-        TNXtype="NonbakiSendMoney";
+        TNXtype="Non-Baki Send Money";
     else if( n==4)
-        TNXtype="CashOut";
-
+        TNXtype="Cash Out";
+    else if( n==5)
+    	TNXtype="Pay Bill";
     MobileNO=mob;
 
 }
@@ -930,6 +1036,8 @@ void TNX::getTnx( )
     cout<<"Amount : "<<amount<<endl;
     cout<<"Tnx Type : "<<TNXtype<<endl;
     cout<<"Destination : "<<MobileNO<<endl;
+
+    cout<<"*********************************\n"<<endl;
 }
 
 void TNX::fgetTnx( )
@@ -942,3 +1050,4 @@ void TNX::fgetTnx( )
     outnx<<"Destination : "<<MobileNO<<endl;
     outnx<<"*************************************\n"<<endl;
 }
+
